@@ -1,0 +1,3 @@
+module Quickshell.Hyprland
+typeinfo plugins.qmltypes
+prefer :/qt-project.org/imports/Quickshell/Hyprland/

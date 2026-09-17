@@ -1,0 +1,3 @@
+module Quickshell.Services.Pipewire
+typeinfo plugins.qmltypes
+prefer :/qt-project.org/imports/Quickshell/Services/Pipewire/

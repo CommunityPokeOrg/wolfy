@@ -1,0 +1,12 @@
+build/
+*.o
+*.so
+*.user
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.qmltypes
+moc_*.cpp
+qrc_*.cpp
+.qmllint.ini

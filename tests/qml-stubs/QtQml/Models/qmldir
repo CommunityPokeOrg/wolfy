@@ -1,0 +1,3 @@
+module QtQml.Models
+typeinfo plugins.qmltypes
+prefer :/qt-project.org/imports/QtQml/Models/

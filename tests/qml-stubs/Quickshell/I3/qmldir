@@ -1,0 +1,3 @@
+module Quickshell.I3
+typeinfo plugins.qmltypes
+prefer :/qt-project.org/imports/Quickshell/I3/

@@ -1,0 +1,17 @@
+{
+    "theme": "moonlight",
+    "compositor": "sway",
+    "barPosition": "top",
+    "barHeight": 34,
+    "barOpacity": 0.92,
+    "launcherMaxResults": 8,
+    "popupSeconds": 5,
+    "allowExec": true,
+    "wallpaper": "",
+    "sessionCommands": {
+        "lock": "swaylock",
+        "logout": "swaymsg exit",
+        "reboot": "systemctl reboot",
+        "poweroff": "systemctl poweroff"
+    }
+}

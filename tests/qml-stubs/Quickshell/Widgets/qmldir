@@ -1,0 +1,4 @@
+module Quickshell.Widgets
+typeinfo plugins.qmltypes
+prefer :/qt-project.org/imports/Quickshell/Widgets/
+depends QtQuick

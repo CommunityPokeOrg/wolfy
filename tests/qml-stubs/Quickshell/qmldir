@@ -1,0 +1,5 @@
+module Quickshell
+typeinfo plugins.qmltypes
+prefer :/qt-project.org/imports/Quickshell/
+depends QtQuick 6.0
+depends Quickshell.Wayland 1.0

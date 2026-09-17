@@ -1,0 +1,3 @@
+module Wolfy.Core
+typeinfo plugins.qmltypes
+prefer :/qt-project.org/imports/Wolfy/Core/
