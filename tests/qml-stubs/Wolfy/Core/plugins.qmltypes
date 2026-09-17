@@ -1,0 +1,45 @@
+import QtQuick.tooling 1.2
+
+// Matches the qmltypes the wolfycore build generates; lets qmllint run
+// without building the plugin first.
+Module {
+
+    Component {
+        name: "ScriptEngine"
+        prototype: "QObject"
+        exports: ["Wolfy.Core/ScriptEngine 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        Property { name: "scriptDirs"; type: "QVariantList" }
+        Property { name: "autoReload"; type: "bool" }
+        Property { name: "allowExec"; type: "bool" }
+        Property { name: "scripts"; type: "QVariantList" }
+        Property { name: "loadedCount"; type: "int" }
+        Method { name: "setConfigObject"; Parameter { name: "config"; type: "QVariant" } }
+        Method { name: "loadScripts" }
+        Method { name: "unloadAll" }
+        Method { name: "emitEvent"
+            Parameter { name: "name"; type: "string" }
+            Parameter { name: "payload"; type: "QVariant" }
+        }
+        Signal { name: "eventFromScript"
+            Parameter { name: "name"; type: "string" }
+            Parameter { name: "payload"; type: "QVariant" }
+        }
+        Signal { name: "logMessage"
+            Parameter { name: "level"; type: "string" }
+            Parameter { name: "message"; type: "string" }
+            Parameter { name: "source"; type: "string" }
+        }
+        Signal { name: "scriptLoaded"; Parameter { name: "path"; type: "string" } }
+        Signal { name: "scriptError"
+            Parameter { name: "path"; type: "string" }
+            Parameter { name: "message"; type: "string" }
+            Parameter { name: "line"; type: "int" }
+        }
+        Signal { name: "scriptDirsChanged" }
+        Signal { name: "autoReloadChanged" }
+        Signal { name: "allowExecChanged" }
+        Signal { name: "scriptsChanged" }
+    }
+}

@@ -1,0 +1,41 @@
+import QtQuick.tooling 1.2
+
+Module {
+
+    Component {
+        name: "UPowerDeviceState"
+        exports: ["Quickshell.Services.UPower/UPowerDeviceState 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        Enum {
+            name: "State"
+            values: ["Unknown", "Charging", "Discharging", "Empty",
+                     "FullyCharged", "PendingCharge", "PendingDischarge"]
+        }
+    }
+    Component {
+        name: "UPowerDevice"
+        prototype: "QObject"
+        exports: ["Quickshell.Services.UPower/UPowerDevice 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        Property { name: "nativePath"; type: "string" }
+        Property { name: "percentage"; type: "double" }
+        Property { name: "state"; type: "int" }
+        Property { name: "isLaptopBattery"; type: "bool" }
+        Property { name: "isPresent"; type: "bool" }
+        Property { name: "healthPercentage"; type: "double" }
+        Property { name: "timeToEmpty"; type: "qlonglong" }
+        Property { name: "timeToFull"; type: "qlonglong" }
+    }
+    Component {
+        name: "UPower"
+        prototype: "QObject"
+        exports: ["Quickshell.Services.UPower/UPower 1.0"]
+        exportMetaObjectRevisions: [256]
+        isSingleton: true
+        Property { name: "onBattery"; type: "bool" }
+        Property { name: "displayDevice"; type: "UPowerDevice" }
+        Property { name: "devices"; type: "UPowerDevice"; isList: true; isReadonly: true }
+    }
+}

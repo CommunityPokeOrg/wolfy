@@ -1,0 +1,45 @@
+import QtQuick.tooling 1.2
+
+Module {
+    dependencies: []
+
+    Component {
+        name: "ListModel"
+        prototype: "QObject"
+        exports: ["QtQml.Models/ListModel 6.0"]
+        exportMetaObjectRevisions: [1536]
+        Property { name: "count"; type: "int"; isReadonly: true }
+        Property { name: "dynamicRoles"; type: "bool" }
+        Method { name: "append"; Parameter { name: "dict"; type: "QVariant" } }
+        Method { name: "insert"
+            Parameter { name: "index"; type: "int" }
+            Parameter { name: "dict"; type: "QVariant" }
+        }
+        Method { name: "get"; type: "QVariant"; Parameter { name: "index"; type: "int" } }
+        Method { name: "set"
+            Parameter { name: "index"; type: "int" }
+            Parameter { name: "dict"; type: "QVariant" }
+        }
+        Method { name: "setProperty"
+            Parameter { name: "index"; type: "int" }
+            Parameter { name: "property"; type: "string" }
+            Parameter { name: "value"; type: "QVariant" }
+        }
+        Method { name: "move"
+            Parameter { name: "from"; type: "int" }
+            Parameter { name: "to"; type: "int" }
+            Parameter { name: "count"; type: "int" }
+        }
+        Method { name: "remove"
+            Parameter { name: "index"; type: "int" }
+            Parameter { name: "count"; type: "int" }
+        }
+        Method { name: "clear" }
+    }
+    Component {
+        name: "ListElement"
+        prototype: "QObject"
+        exports: ["QtQml.Models/ListElement 6.0"]
+        exportMetaObjectRevisions: [1536]
+    }
+}

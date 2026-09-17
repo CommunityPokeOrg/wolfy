@@ -18,7 +18,13 @@ have make || have ninja || die "make/ninja not found"
 have quickshell || echo "install: warning: quickshell not in PATH (install it to run Wolfy)"
 
 QT_MAJOR=""
-for q in /usr/lib/qt6/bin/qmake qmake6 qmake; do
+# QMAKE env or QT_DIR (a Qt install root) override; otherwise probe common
+# locations, best first.
+candidates=("${QMAKE:-}")
+[ -n "${QT_DIR:-}" ] && candidates+=("$QT_DIR/bin/qmake" "$QT_DIR/bin/qmake6")
+candidates+=(/usr/lib/qt6/bin/qmake qmake6 qmake)
+for q in "${candidates[@]}"; do
+    [ -n "$q" ] || continue
     have "$q" || [ -x "$q" ] || continue
     v="$("$q" -query QT_VERSION 2>/dev/null || true)"
     [ -n "$v" ] && { QT_MAJOR="$v"; QMAKE="$q"; break; }
@@ -30,8 +36,11 @@ echo "install: Qt $QT_MAJOR ($QMAKE)"
 
 # --- build wolfycore ------------------------------------------------------
 GENERATOR=()
-have ninja && GENERATOR=(-G Ninja)
-cmake -B "$BUILD_DIR" "${GENERATOR[@]}" -DCMAKE_BUILD_TYPE=Release
+# Only pick a generator for a fresh build dir; an existing cache keeps its own.
+[ ! -f "$BUILD_DIR/CMakeCache.txt" ] && have ninja && GENERATOR=(-G Ninja)
+cmake -B "$BUILD_DIR" "${GENERATOR[@]}" -DCMAKE_BUILD_TYPE=Release \
+    ${CMAKE_PREFIX_PATH:+-DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH"} \
+    ${QT_DIR:+-DCMAKE_PREFIX_PATH="$QT_DIR"}
 cmake --build "$BUILD_DIR" --parallel
 [ -f "$BUILD_DIR/Wolfy/Core/libwolfycore.so" ] \
     || die "build did not produce Wolfy/Core/libwolfycore.so"

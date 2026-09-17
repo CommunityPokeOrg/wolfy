@@ -1,0 +1,52 @@
+import QtQuick.tooling 1.2
+
+Module {
+
+    Component {
+        name: "WlrLayershell"
+        prototype: "QObject"
+        exports: ["Quickshell.Wayland/WlrLayershell 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        attachedType: "WlrLayershell"
+        Property { name: "layer"; type: "int" }
+        Property { name: "keyboardFocus"; type: "int" }
+        Property { name: "namespace"; type: "string" }
+        Property { name: "exclusiveFocus"; type: "bool" }
+    }
+    Component {
+        name: "WlrLayer"
+        exports: ["Quickshell.Wayland/WlrLayer 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        Enum { name: "Layer"; values: ["Background", "Bottom", "Top", "Overlay"] }
+    }
+    Component {
+        name: "WlrKeyboardFocus"
+        exports: ["Quickshell.Wayland/WlrKeyboardFocus 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        Enum { name: "Focus"; values: ["None", "Exclusive", "OnDemand"] }
+    }
+    Component {
+        name: "Toplevel"
+        prototype: "QObject"
+        exports: ["Quickshell.Wayland/Toplevel 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        Property { name: "appId"; type: "string" }
+        Property { name: "title"; type: "string" }
+        Property { name: "activated"; type: "bool" }
+        Method { name: "activate" }
+        Method { name: "close" }
+    }
+    Component {
+        name: "ToplevelManager"
+        prototype: "QObject"
+        exports: ["Quickshell.Wayland/ToplevelManager 1.0"]
+        exportMetaObjectRevisions: [256]
+        isSingleton: true
+        Property { name: "toplevels"; type: "Toplevel"; isList: true; isReadonly: true }
+        Property { name: "activeToplevel"; type: "Toplevel" }
+    }
+}

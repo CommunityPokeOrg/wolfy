@@ -1,0 +1,35 @@
+import QtQuick.tooling 1.2
+
+Module {
+
+    Component {
+        name: "I3Workspace"
+        prototype: "QObject"
+        exports: ["Quickshell.I3/I3Workspace 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        Property { name: "id"; type: "int" }
+        Property { name: "name"; type: "string" }
+        Property { name: "focused"; type: "bool" }
+        Property { name: "active"; type: "bool" }
+        Property { name: "urgent"; type: "bool" }
+        Method { name: "activate" }
+    }
+    Component {
+        name: "UntypedObjectModel"
+        prototype: "QObject"
+        isCreatable: false
+        Property { name: "values"; type: "I3Workspace"; isList: true; isReadonly: true }
+    }
+    Component {
+        name: "I3"
+        prototype: "QObject"
+        exports: ["Quickshell.I3/I3 1.0"]
+        exportMetaObjectRevisions: [256]
+        isSingleton: true
+        Property { name: "workspaces"; type: "UntypedObjectModel"; isReadonly: true }
+        Property { name: "focusedWorkspace"; type: "I3Workspace" }
+        Method { name: "dispatch"; Parameter { name: "request"; type: "string" } }
+        Method { name: "monitorFor"; Parameter { name: "screen"; type: "QObject" } }
+    }
+}

@@ -140,6 +140,30 @@ private slots:
         QCOMPARE(emitted.at(0).at(1).toInt(), 2);
     }
 
+    void foreignEnginePayloadIsDetached()
+    {
+        // QML object literals reach emitEvent() as QJSValues owned by the
+        // shell engine; they must be detached before crossing into a
+        // script's engine.
+        QTemporaryDir tmp;
+        writeScript(tmp, QStringLiteral("recv.js"), QStringLiteral(
+            "wolfy.on('data', function(d){ wolfy.emit('seen', d.name); });"));
+
+        QJSEngine foreign;
+        const QVariant payload =
+            QVariant::fromValue(foreign.evaluate("({name: 'w1'})"));
+
+        ScriptEngine engine;
+        QSignalSpy emitted(&engine, &ScriptEngine::eventFromScript);
+        engine.setScriptDirs({tmp.path()});
+        engine.emitEvent(QStringLiteral("data"), payload);
+        QCoreApplication::processEvents();
+
+        QCOMPARE(emitted.count(), 1);
+        QCOMPARE(emitted.at(0).at(0).toString(), QStringLiteral("seen"));
+        QCOMPARE(emitted.at(0).at(1).toString(), QStringLiteral("w1"));
+    }
+
     void configReachesScripts()
     {
         QTemporaryDir tmp;

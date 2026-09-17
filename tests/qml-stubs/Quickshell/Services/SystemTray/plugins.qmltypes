@@ -1,0 +1,39 @@
+import QtQuick.tooling 1.2
+
+Module {
+
+    Component {
+        name: "SystemTrayItem"
+        prototype: "QObject"
+        exports: ["Quickshell.Services.SystemTray/SystemTrayItem 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        Property { name: "id"; type: "string" }
+        Property { name: "title"; type: "string" }
+        Property { name: "status"; type: "int" }
+        Property { name: "icon"; type: "string" }
+        Property { name: "tooltipTitle"; type: "string" }
+        Property { name: "tooltipDescription"; type: "string" }
+        Property { name: "hasMenu"; type: "bool" }
+        Property { name: "menu"; type: "QObject" }
+        Method { name: "activate" }
+        Method { name: "secondaryActivate" }
+        Method { name: "scroll"
+            Parameter { name: "delta"; type: "int" }
+            Parameter { name: "horizontal"; type: "bool" }
+        }
+        Method { name: "display"
+            Parameter { name: "parent"; type: "QObject" }
+            Parameter { name: "relativeX"; type: "int" }
+            Parameter { name: "relativeY"; type: "int" }
+        }
+    }
+    Component {
+        name: "SystemTray"
+        prototype: "QObject"
+        exports: ["Quickshell.Services.SystemTray/SystemTray 1.0"]
+        exportMetaObjectRevisions: [256]
+        isSingleton: true
+        Property { name: "items"; type: "SystemTrayItem"; isList: true; isReadonly: true }
+    }
+}

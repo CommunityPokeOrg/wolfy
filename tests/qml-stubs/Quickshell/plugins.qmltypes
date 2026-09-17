@@ -1,0 +1,210 @@
+import QtQuick.tooling 1.2
+
+// qmllint stub for the Quickshell core module. Mirrors the public API
+// surface Wolfy uses; keep in sync when adding shell features.
+Module {
+
+    Component {
+        name: "ShellScreen"
+        prototype: "QObject"
+        exports: ["Quickshell/ShellScreen 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        Property { name: "name"; type: "string" }
+        Property { name: "width"; type: "int" }
+        Property { name: "height"; type: "int" }
+        Property { name: "x"; type: "int" }
+        Property { name: "y"; type: "int" }
+        Property { name: "model"; type: "string" }
+    }
+    Component {
+        name: "PanelAnchor"
+        prototype: "QObject"
+        isCreatable: false
+        Property { name: "top"; type: "bool" }
+        Property { name: "bottom"; type: "bool" }
+        Property { name: "left"; type: "bool" }
+        Property { name: "right"; type: "bool" }
+    }
+    Component {
+        name: "PanelMargins"
+        prototype: "QObject"
+        isCreatable: false
+        Property { name: "top"; type: "int" }
+        Property { name: "bottom"; type: "int" }
+        Property { name: "left"; type: "int" }
+        Property { name: "right"; type: "int" }
+    }
+    Component {
+        name: "ShellRoot"
+        prototype: "QObject"
+        exports: ["Quickshell/ShellRoot 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        defaultProperty: "data"
+        Property { name: "data"; type: "QObject"; isList: true }
+    }
+    Component {
+        name: "Scope"
+        prototype: "QObject"
+        exports: ["Quickshell/Scope 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        defaultProperty: "data"
+        Property { name: "data"; type: "QObject"; isList: true }
+    }
+    Component {
+        name: "Singleton"
+        prototype: "QObject"
+        exports: ["Quickshell/Singleton 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        defaultProperty: "data"
+        Property { name: "data"; type: "QObject"; isList: true }
+    }
+    Component {
+        name: "Variants"
+        prototype: "QObject"
+        exports: ["Quickshell/Variants 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        defaultProperty: "delegate"
+        Property { name: "model"; type: "QVariant" }
+        Property { name: "delegate"; type: "QQmlComponent" }
+        Property { name: "variants"; type: "QObject"; isList: true; isReadonly: true }
+    }
+    Component {
+        name: "LazyLoader"
+        prototype: "QObject"
+        exports: ["Quickshell/LazyLoader 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        defaultProperty: "data"
+        Property { name: "active"; type: "bool" }
+        Property { name: "component"; type: "QQmlComponent" }
+        Property { name: "source"; type: "QUrl" }
+        Property { name: "item"; type: "QObject" }
+        Property { name: "data"; type: "QObject"; isList: true }
+    }
+    Component {
+        name: "Region"
+        prototype: "QObject"
+        exports: ["Quickshell/Region 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        Property { name: "item"; type: "QQuickItem" }
+        Property { name: "x"; type: "int" }
+        Property { name: "y"; type: "int" }
+        Property { name: "width"; type: "int" }
+        Property { name: "height"; type: "int" }
+        Property { name: "intersection"; type: "int" }
+    }
+    Component {
+        name: "ExclusionMode"
+        exports: ["Quickshell/ExclusionMode 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        Enum { name: "Mode"; values: ["Auto", "Normal", "Ignore"] }
+    }
+    Component {
+        name: "PanelWindow"
+        prototype: "QQuickWindow"
+        exports: ["Quickshell/PanelWindow 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        defaultProperty: "data"
+        Property { name: "screen"; type: "ShellScreen" }
+        Property { name: "anchors"; type: "PanelAnchor" }
+        Property { name: "margins"; type: "PanelMargins" }
+        Property { name: "implicitWidth"; type: "int" }
+        Property { name: "implicitHeight"; type: "int" }
+        Property { name: "exclusiveZone"; type: "double" }
+        Property { name: "exclusionMode"; type: "int" }
+        Property { name: "mask"; type: "Region" }
+        Property { name: "color"; type: "QColor" }
+        Property { name: "data"; type: "QObject"; isList: true }
+        Property { name: "contentItem"; type: "QQuickItem" }
+    }
+    Component {
+        name: "PopupWindow"
+        prototype: "QQuickWindow"
+        exports: ["Quickshell/PopupWindow 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        defaultProperty: "data"
+        Property { name: "anchor"; type: "QObject" }
+        Property { name: "parentWindow"; type: "QQuickWindow" }
+        Property { name: "color"; type: "QColor" }
+        Property { name: "implicitWidth"; type: "int" }
+        Property { name: "implicitHeight"; type: "int" }
+        Property { name: "data"; type: "QObject"; isList: true }
+    }
+    Component {
+        name: "SystemClock"
+        prototype: "QObject"
+        exports: ["Quickshell/SystemClock 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        Property { name: "enabled"; type: "bool" }
+        Property { name: "precision"; type: "int" }
+        Property { name: "date"; type: "QDateTime" }
+        Property { name: "hours"; type: "int" }
+        Property { name: "minutes"; type: "int" }
+        Property { name: "seconds"; type: "int" }
+        Enum { name: "Precision"; values: ["Seconds", "Minutes", "Hours"] }
+    }
+    Component {
+        name: "IpcHandler"
+        prototype: "QObject"
+        exports: ["Quickshell/IpcHandler 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        defaultProperty: "data"
+        Property { name: "target"; type: "string" }
+        Property { name: "data"; type: "QObject"; isList: true }
+    }
+    Component {
+        name: "DesktopEntry"
+        prototype: "QObject"
+        exports: ["Quickshell/DesktopEntry 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        Property { name: "id"; type: "string" }
+        Property { name: "name"; type: "string" }
+        Property { name: "genericName"; type: "string" }
+        Property { name: "comment"; type: "string" }
+        Property { name: "icon"; type: "string" }
+        Property { name: "execString"; type: "string" }
+        Property { name: "runInTerminal"; type: "bool" }
+        Method { name: "execute" }
+    }
+    Component {
+        name: "DesktopEntries"
+        prototype: "QObject"
+        exports: ["Quickshell/DesktopEntries 1.0"]
+        exportMetaObjectRevisions: [256]
+        isSingleton: true
+        Property { name: "applications"; type: "QVariant" }
+        Method { name: "byId"; type: "DesktopEntry"; Parameter { name: "id"; type: "string" } }
+        Method { name: "heuristicLookup"; type: "DesktopEntry"; Parameter { name: "name"; type: "string" } }
+    }
+    Component {
+        name: "Quickshell"
+        prototype: "QObject"
+        exports: ["Quickshell/Quickshell 1.0"]
+        exportMetaObjectRevisions: [256]
+        isSingleton: true
+        Property { name: "screens"; type: "ShellScreen"; isList: true; isReadonly: true }
+        Property { name: "shellDir"; type: "string" }
+        Property { name: "shellPath"; type: "string" }
+        Property { name: "dataDir"; type: "string" }
+        Method { name: "env"; type: "string"; Parameter { name: "variable"; type: "string" } }
+        Method { name: "iconPath"; type: "string"
+            Parameter { name: "icon"; type: "string" }
+            Parameter { name: "checkFallback"; type: "bool" }
+        }
+        Method { name: "execDetached"; Parameter { name: "command"; type: "QStringList" } }
+        Method { name: "reload" }
+        Method { name: "quit" }
+    }
+}

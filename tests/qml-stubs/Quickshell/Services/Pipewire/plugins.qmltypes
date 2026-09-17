@@ -1,0 +1,52 @@
+import QtQuick.tooling 1.2
+
+Module {
+
+    Component {
+        name: "PwNodeAudio"
+        prototype: "QObject"
+        exports: ["Quickshell.Services.Pipewire/PwNodeAudio 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        Property { name: "volume"; type: "double" }
+        Property { name: "muted"; type: "bool" }
+        Property { name: "channels"; type: "QVariantList" }
+        Property { name: "volumes"; type: "QVariantList" }
+    }
+    Component {
+        name: "PwNode"
+        prototype: "QObject"
+        exports: ["Quickshell.Services.Pipewire/PwNode 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        Property { name: "id"; type: "int" }
+        Property { name: "name"; type: "string" }
+        Property { name: "description"; type: "string" }
+        Property { name: "nickname"; type: "string" }
+        Property { name: "isSink"; type: "bool" }
+        Property { name: "isSource"; type: "bool" }
+        Property { name: "isStream"; type: "bool" }
+        Property { name: "audio"; type: "PwNodeAudio" }
+        Property { name: "properties"; type: "QVariantMap" }
+    }
+    Component {
+        name: "PwNodeLinkTracker"
+        prototype: "QObject"
+        exports: ["Quickshell.Services.Pipewire/PwNodeLinkTracker 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        Property { name: "node"; type: "PwNode" }
+    }
+    Component {
+        name: "Pipewire"
+        prototype: "QObject"
+        exports: ["Quickshell.Services.Pipewire/Pipewire 1.0"]
+        exportMetaObjectRevisions: [256]
+        isSingleton: true
+        Property { name: "nodes"; type: "PwNode"; isList: true; isReadonly: true }
+        Property { name: "defaultAudioSink"; type: "PwNode" }
+        Property { name: "defaultAudioSource"; type: "PwNode" }
+        Property { name: "defaultConfiguredSink"; type: "PwNode" }
+        Property { name: "defaultConfiguredSource"; type: "PwNode" }
+    }
+}

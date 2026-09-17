@@ -5,32 +5,36 @@ import Quickshell.Widgets
 import QtQuick
 import "../services"
 
-Row {
-    spacing: 6
-    implicitWidth: childrenRect.width
-    implicitHeight: childrenRect.height
+Item {
+    implicitWidth: row.implicitWidth
+    implicitHeight: row.implicitHeight
 
-    Repeater {
-        model: SystemTray.items
+    Row {
+        id: row
+        spacing: 6
 
-        Item {
-            required property var modelData
-            width: 20
-            height: 20
+        Repeater {
+            model: SystemTray.items
 
-            IconImage {
-                anchors.fill: parent
-                source: modelData.icon
-            }
+            Item {
+                required property var modelData
+                width: 20
+                height: 20
 
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                onClicked: (mouse) => {
-                    if (mouse.button === Qt.LeftButton)
-                        modelData.activate();
-                    else if (modelData.hasMenu)
-                        modelData.display(null, 0, 0);
+                IconImage {
+                    anchors.fill: parent
+                    source: modelData.icon
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    onClicked: (mouse) => {
+                        if (mouse.button === Qt.LeftButton)
+                            modelData.activate();
+                        else if (modelData.hasMenu)
+                            modelData.display(null, 0, 0);
+                    }
                 }
             }
         }

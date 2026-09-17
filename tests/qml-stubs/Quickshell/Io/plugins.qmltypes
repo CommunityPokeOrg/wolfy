@@ -1,0 +1,72 @@
+import QtQuick.tooling 1.2
+
+Module {
+
+    Component {
+        name: "IpcHandler"
+        prototype: "QObject"
+        exports: ["Quickshell.Io/IpcHandler 1.0"]
+        exportMetaObjectRevisions: [256]
+        Property { name: "target"; type: "string" }
+        Signal { name: "rawIpc"; Parameter { name: "raw"; type: "string" } }
+    }
+    Component {
+        name: "FileAdapter"
+        prototype: "QObject"
+        exports: ["Quickshell.Io/FileAdapter 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+    }
+    Component {
+        name: "JsonAdapter"
+        prototype: "FileAdapter"
+        exports: ["Quickshell.Io/JsonAdapter 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+    }
+    Component {
+        name: "FileView"
+        prototype: "QObject"
+        exports: ["Quickshell.Io/FileView 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        Property { name: "path"; type: "string" }
+        Property { name: "watchChanges"; type: "bool" }
+        Property { name: "blockLoading"; type: "bool" }
+        Property { name: "blockWrites"; type: "bool" }
+        Property { name: "atomicWrites"; type: "bool" }
+        Property { name: "adapter"; type: "FileAdapter" }
+        Property { name: "printErrors"; type: "bool" }
+        Method { name: "text"; type: "string" }
+        Method { name: "data"; type: "QByteArray" }
+        Method { name: "reload" }
+        Method { name: "setText"; Parameter { name: "text"; type: "string" } }
+        Method { name: "waitForJob" }
+        Signal { name: "fileChanged" }
+        Signal { name: "loaded" }
+        Signal { name: "loadFailed"; Parameter { name: "error"; type: "int" } }
+        Signal { name: "saved" }
+        Signal { name: "saveFailed"; Parameter { name: "error"; type: "int" } }
+        Signal { name: "adapterUpdated" }
+    }
+    Component {
+        name: "Process"
+        prototype: "QObject"
+        exports: ["Quickshell.Io/Process 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        Property { name: "running"; type: "bool" }
+        Property { name: "command"; type: "QStringList" }
+        Property { name: "environment"; type: "QVariantMap" }
+        Property { name: "workingDirectory"; type: "string" }
+        Property { name: "stdout"; type: "string" }
+        Property { name: "stderr"; type: "string" }
+        Property { name: "exitCode"; type: "int" }
+        Method { name: "signal"; Parameter { name: "signal"; type: "int" } }
+        Signal { name: "exited"
+            Parameter { name: "exitCode"; type: "int" }
+            Parameter { name: "exitStatus"; type: "int" }
+        }
+        Signal { name: "started" }
+    }
+}

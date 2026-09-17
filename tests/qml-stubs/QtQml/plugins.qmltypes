@@ -1,0 +1,72 @@
+import QtQuick.tooling 1.2
+
+// The distro's QtQml module ships no qmldir, so qmllint cannot resolve
+// the built-in Qt global. This stub declares the members Wolfy uses.
+Module {
+    dependencies: []
+
+    Component {
+        name: "Component"
+        prototype: "QObject"
+        exports: ["QtQml/Component 6.0"]
+        exportMetaObjectRevisions: [1536]
+        attachedType: "Component"
+        Signal { name: "completed" }
+        Signal { name: "destruction" }
+    }
+    Component {
+        name: "Timer"
+        prototype: "QObject"
+        exports: ["QtQml/Timer 6.0"]
+        exportMetaObjectRevisions: [1536]
+        Property { name: "interval"; type: "int" }
+        Property { name: "running"; type: "bool" }
+        Property { name: "repeat"; type: "bool" }
+        Property { name: "triggeredOnStart"; type: "bool" }
+        Method { name: "start" }
+        Method { name: "stop" }
+        Method { name: "restart" }
+        Signal { name: "triggered" }
+    }
+    Component {
+        name: "Qt"
+        prototype: "QObject"
+        exports: ["QtQml/Qt 6.0"]
+        exportMetaObjectRevisions: [1536]
+        isSingleton: true
+        Enum {
+            name: "MouseButton"
+            values: ["NoButton", "AllButtons", "LeftButton", "RightButton",
+                     "MiddleButton", "BackButton", "ForwardButton"]
+        }
+        Enum {
+            name: "Alignment"
+            values: ["AlignLeft", "AlignRight", "AlignHCenter", "AlignJustify",
+                     "AlignTop", "AlignBottom", "AlignVCenter", "AlignCenter",
+                     "AlignAbsolute", "AlignHorizontal_Mask", "AlignVertical_Mask"]
+        }
+        Enum {
+            name: "Key"
+            values: ["Key_Escape", "Key_Return", "Key_Enter", "Key_Tab",
+                     "Key_Up", "Key_Down", "Key_Left", "Key_Right"]
+        }
+        Method { name: "formatDateTime"; type: "string"
+            Parameter { name: "datetime"; type: "QVariant" }
+            Parameter { name: "format"; type: "QVariant" }
+        }
+        Method { name: "rgba"; type: "QVariant"
+            Parameter { name: "r"; type: "double" }
+            Parameter { name: "g"; type: "double" }
+            Parameter { name: "b"; type: "double" }
+            Parameter { name: "a"; type: "double" }
+        }
+        Method { name: "binding"; type: "QVariant"
+            Parameter { name: "function"; type: "QJSValue" }
+        }
+        Method { name: "locale"; type: "QVariant" }
+        Method { name: "quit" }
+        Method { name: "resolvedUrl"; type: "QUrl"
+            Parameter { name: "url"; type: "QVariant" }
+        }
+    }
+}

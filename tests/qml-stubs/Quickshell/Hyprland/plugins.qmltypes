@@ -1,0 +1,30 @@
+import QtQuick.tooling 1.2
+
+Module {
+
+    Component {
+        name: "HyprlandWorkspace"
+        prototype: "QObject"
+        exports: ["Quickshell.Hyprland/HyprlandWorkspace 1.0"]
+        exportMetaObjectRevisions: [256]
+        isCreatable: false
+        Property { name: "id"; type: "int" }
+        Property { name: "name"; type: "string" }
+        Property { name: "active"; type: "bool" }
+        Property { name: "focused"; type: "bool" }
+        Property { name: "urgent"; type: "bool" }
+        Method { name: "activate" }
+    }
+    Component {
+        name: "Hyprland"
+        prototype: "QObject"
+        exports: ["Quickshell.Hyprland/Hyprland 1.0"]
+        exportMetaObjectRevisions: [256]
+        isSingleton: true
+        Property { name: "workspaces"; type: "HyprlandWorkspace"; isList: true; isReadonly: true }
+        Property { name: "focusedWorkspace"; type: "HyprlandWorkspace" }
+        Property { name: "focusedMonitor"; type: "QObject" }
+        Property { name: "activeToplevel"; type: "QObject" }
+        Method { name: "dispatch"; Parameter { name: "request"; type: "string" } }
+    }
+}

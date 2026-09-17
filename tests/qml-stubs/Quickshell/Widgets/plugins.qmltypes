@@ -1,0 +1,27 @@
+import QtQuick.tooling 1.2
+
+Module {
+
+    Component {
+        name: "IconImage"
+        prototype: "QQuickItem"
+        exports: ["Quickshell.Widgets/IconImage 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        Property { name: "source"; type: "QUrl" }
+        Property { name: "implicitSize"; type: "double" }
+        Property { name: "asynchronous"; type: "bool" }
+        Property { name: "mipmap"; type: "bool" }
+    }
+    Component {
+        name: "MarginWrapperManager"
+        prototype: "QObject"
+        exports: ["Quickshell.Widgets/MarginWrapperManager 1.0"]
+        exportMetaObjectRevisions: [256]
+        
+        defaultProperty: "data"
+        Property { name: "margin"; type: "int" }
+        Property { name: "child"; type: "QQuickItem" }
+        Property { name: "data"; type: "QObject"; isList: true }
+    }
+}

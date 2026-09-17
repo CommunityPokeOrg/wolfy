@@ -7,6 +7,7 @@ CMakeFiles/
 cmake_install.cmake
 Makefile
 *.qmltypes
+!tests/qml-stubs/**/plugins.qmltypes
 moc_*.cpp
 qrc_*.cpp
 .qmllint.ini

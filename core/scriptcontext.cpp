@@ -18,6 +18,16 @@ ScriptContext::ScriptContext(const QString &path, ScriptEngine *engine)
 
 ScriptContext::~ScriptContext() = default;
 
+// QML object literals arrive as QJSValues owned by the shell's engine and
+// cannot be re-registered in a script's engine. toVariant() detaches them
+// into plain QVariant data we can convert locally.
+static QVariant detachPayload(const QVariant &payload)
+{
+    if (payload.metaType().id() == qMetaTypeId<QJSValue>())
+        return payload.value<QJSValue>().toVariant();
+    return payload;
+}
+
 bool ScriptContext::evaluate()
 {
     QFile file(m_path);
@@ -49,7 +59,7 @@ void ScriptContext::dispatch(const QString &event, const QVariant &payload)
             continue;
         // Convert into this script's own engine so handlers receive
         // native JS values, not a foreign QJSValue wrapper.
-        QJSValue local = m_js->toScriptValue(payload);
+        QJSValue local = m_js->toScriptValue(detachPayload(payload));
         QJSValue result = handler.call({local});
         if (result.isError()) {
             reportError(QStringLiteral("%1 handler: %2")
@@ -91,7 +101,7 @@ QJSValue ScriptContext::buildApiObject()
     api.setProperty(QStringLiteral("scriptPath"), m_path);
     if (m_engine->configObject().isValid())
         api.setProperty(QStringLiteral("config"),
-                        m_js->toScriptValue(m_engine->configObject()));
+                        m_js->toScriptValue(detachPayload(m_engine->configObject())));
     return api;
 }
 
