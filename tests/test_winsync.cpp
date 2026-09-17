@@ -167,6 +167,34 @@ private slots:
         sync.sweep(); // public slot — force it rather than waiting 30s
         QCOMPARE(sync.windowCount(), 0);
     }
+
+    void upsertStripsUnmarshallableValues()
+    {
+        // JS sources can hand us null/undefined fields, which arrive
+        // as QMetaType::Nullptr — a type libdbus cannot marshal, so
+        // emitting it in a signal kills the process. They must be
+        // dropped at the door.
+        WindowSync sync;
+        QSignalSpy added(&sync, &WindowSync::windowAdded);
+        QVariantMap bad = entry(QStringLiteral("kwin"), QStringLiteral("5"),
+                                QStringLiteral("Nulls"));
+        bad.insert(QStringLiteral("rect"),
+                   QVariant::fromValue(std::nullptr_t()));
+        bad.insert(QStringLiteral("note"), QVariant());
+        QVariantMap nested;
+        nested.insert(QStringLiteral("x"), 1);
+        nested.insert(QStringLiteral("bad"),
+                      QVariant::fromValue(std::nullptr_t()));
+        bad.insert(QStringLiteral("meta"), nested);
+
+        const QVariantMap e = sync.upsert(bad);
+        QVERIFY(!e.contains(QStringLiteral("rect")));
+        QVERIFY(!e.contains(QStringLiteral("note")));
+        const QVariantMap meta = e.value(QStringLiteral("meta")).toMap();
+        QCOMPARE(meta.value(QStringLiteral("x")).toInt(), 1);
+        QVERIFY(!meta.contains(QStringLiteral("bad")));
+        QCOMPARE(added.count(), 1);
+    }
 };
 
 QTEST_GUILESS_MAIN(TestWindowSync)

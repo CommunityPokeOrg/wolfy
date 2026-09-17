@@ -140,9 +140,21 @@ function serialize(w) {
     };
 }
 
+function scrub(o) {
+    // null/undefined values marshal as QMetaType::Nullptr, which the
+    // registry (and libdbus on its side) cannot carry — drop them.
+    var out = {};
+    for (var k in o) {
+        var v = o[k];
+        if (v === null || v === undefined) continue;
+        out[k] = v;
+    }
+    return out;
+}
+
 function push(w) {
     if (!isWindow(w)) return;
-    send("upsert", serialize(w));
+    send("upsert", scrub(serialize(w)));
 }
 
 function drop(w) {

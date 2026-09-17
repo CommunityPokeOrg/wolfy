@@ -69,6 +69,39 @@ QVariantMap WindowSync::mergeEntry(const QVariantMap &old, const QVariantMap &di
     return merged;
 }
 
+QVariant WindowSync::sanitizeValue(const QVariant &v) const
+{
+    const int t = v.userType();
+    // Values libdbus cannot marshal (Nullptr from JS null/undefined,
+    // invalid or custom types) must never reach signals or storage —
+    // dbus-daemon abort()s the sender on marshall failure.
+    if (!v.isValid() || t == QMetaType::Nullptr || t == QMetaType::UnknownType)
+        return {};
+    if (t == QMetaType::QVariantMap)
+        return sanitize(v.toMap());
+    if (t == QMetaType::QVariantList) {
+        QVariantList out;
+        for (const QVariant &item : v.toList()) {
+            QVariant s = sanitizeValue(item);
+            if (s.isValid())
+                out.append(s);
+        }
+        return out;
+    }
+    return v;
+}
+
+QVariantMap WindowSync::sanitize(const QVariantMap &in) const
+{
+    QVariantMap out;
+    for (auto it = in.constBegin(); it != in.constEnd(); ++it) {
+        QVariant s = sanitizeValue(it.value());
+        if (s.isValid())
+            out.insert(it.key(), s);
+    }
+    return out;
+}
+
 bool WindowSync::suppressed(const QString &identity) const
 {
     return m_suppressedUntil.value(identity) > QDateTime::currentMSecsSinceEpoch();
@@ -87,7 +120,8 @@ QVariantMap WindowSync::upsert(const QVariantMap &entry)
     const qint64 now = QDateTime::currentMSecsSinceEpoch();
     const bool isNew = !m_entries.contains(key);
 
-    QVariantMap merged = isNew ? entry : mergeEntry(m_entries.value(key), entry);
+    const QVariantMap clean = sanitize(entry);
+    QVariantMap merged = isNew ? clean : mergeEntry(m_entries.value(key), clean);
     merged[QStringLiteral("key")] = key;
     merged[QStringLiteral("source")] = source;
     merged[QStringLiteral("id")] = id;
@@ -118,13 +152,17 @@ QVariantMap WindowSync::remove(const QString &key)
     if (!m_entries.contains(key))
         return {};
     QVariantMap e = m_entries.value(key);
+    // Sources may fire remove twice for one window (KWin emits both a
+    // per-window closed signal and clientRemoved) — only the first is
+    // an event.
+    const bool alreadyGone = e.value(QStringLiteral("gone")).toBool();
     e[QStringLiteral("gone")] = true;
     e[QStringLiteral("lastSeen")] = QDateTime::currentMSecsSinceEpoch();
     m_entries.insert(key, e);
     queueSave();
 
     const QString identity = e.value(QStringLiteral("identity")).toString();
-    if (!identity.isEmpty() && !suppressed(identity))
+    if (!alreadyGone && !identity.isEmpty() && !suppressed(identity))
         emit windowRemoved(e);
     emit windowsChanged();
     return e;
@@ -306,7 +344,9 @@ void WindowSync::load()
             continue;
         // Restored entries keep their own lastSeen; the sweeper drops
         // anything older than staleMs so stale state can't linger.
-        QVariantMap entry = e;
+        // JSON nulls restore as invalid QVariants — sanitize so they
+        // can't poison a signal's QVariantMap payload later.
+        QVariantMap entry = sanitize(e);
         entry[QStringLiteral("restored")] = true;
         entry[QStringLiteral("adopted")] = false;
         entry[QStringLiteral("gone")] = true; // unconfirmed until re-seen

@@ -109,6 +109,8 @@ public slots:
 
 private:
     QVariantMap mergeEntry(const QVariantMap &old, const QVariantMap &diff) const;
+    QVariantMap sanitize(const QVariantMap &in) const;
+    QVariant sanitizeValue(const QVariant &v) const;
     bool suppressed(const QString &identity) const;
     void queueSave();
     void load();
