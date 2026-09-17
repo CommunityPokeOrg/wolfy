@@ -29,6 +29,10 @@ local toplevels ──────────────▶    │          �
   A source can be anything that can call D-Bus (the KWin bridge, another
   Wolfy instance, a script) or QML (`WinSync` feeds the local compositor's
   wlr foreign-toplevel list).
+- **Taskbar** (`components/Taskbar.qml`) renders one button per live
+  entry — remote sources get a `[kwin]` tag. Clicking a local window
+  activates it; clicking a remote one emits `window.activate` with the
+  entry so a script can route it (e.g. `wmctrl -a` on the host session).
 - **Registry** stores, per window: `appId`/`identity`, `title`, `rect`,
   `workspace`, `output`, `minimized`, `maximized`, `fullscreen`,
   `focused`, `lastSeen`, `gone`, `adopted`.
@@ -132,6 +136,11 @@ tools/kwin-bridge.sh relay     # auto-detects KWin's bus for $DISPLAY
   *state*; adoption restores what the target compositor's protocol
   allows. A window that "moves displays" is actually closed on one and
   reopened on the other — adoption makes that invisible to scripts.
+- **Wolfy mirrors metadata, not surfaces.** A `kwin|…` taskbar entry is
+  a *representation* of the remote window (identity, title, geometry,
+  state) — the window's pixels stay on the owning compositor; there is
+  no literal cross-compositor embedding. Clicking it forwards
+  `window.activate` for a script to route to the owning session.
 - Geometry restore is best-effort: wlr foreign-toplevel has no
   request-geometry for regular windows, so `rect` is synced for
   awareness, not applied under sway. i3/sway geometry restore could be

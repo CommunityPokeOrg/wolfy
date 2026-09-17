@@ -92,6 +92,22 @@ Singleton {
         return "";
     }
 
+    // Taskbar click: activate the toplevel behind a local registry key.
+    // Remote (kwin|…) keys can't be activated here — the window lives on
+    // the other compositor — so the click is forwarded as an event for a
+    // script to route (e.g. wmctrl on the host session).
+    function activate(key, entry) {
+        for (const [t, k] of liveKeys) {
+            if (k === key) {
+                t.activate();
+                return true;
+            }
+        }
+        ScriptHost.emitEvent("window.activate",
+                             entry !== undefined ? entry : { key: key });
+        return false;
+    }
+
     function reconcile() {
         if (!sync.enabled)
             return;

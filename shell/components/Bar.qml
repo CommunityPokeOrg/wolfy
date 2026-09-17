@@ -37,6 +37,9 @@ PanelWindow {
         // left: workspaces
         Workspaces { Layout.fillHeight: true }
 
+        // synced windows from every source (local + KWin bridge)
+        Taskbar { Layout.fillHeight: true }
+
         Item { Layout.fillWidth: true }
 
         // center: clock
