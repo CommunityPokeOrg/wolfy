@@ -21,6 +21,7 @@ Singleton {
     property alias allowExec: adapter.allowExec
     property alias wallpaper: adapter.wallpaper
     property alias sessionCommands: adapter.sessionCommands
+    property alias windowSync: adapter.windowSync
 
     // Raw view of the parsed config, handed to scripts as wolfy.config.
     readonly property var forScripts: ({
@@ -31,7 +32,8 @@ Singleton {
         launcherMaxResults: adapter.launcherMaxResults,
         popupSeconds: adapter.popupSeconds,
         allowExec: adapter.allowExec,
-        wallpaper: adapter.wallpaper
+        wallpaper: adapter.wallpaper,
+        windowSync: adapter.windowSync
     })
 
     FileView {
@@ -56,6 +58,16 @@ Singleton {
                 logout: "swaymsg exit",
                 reboot: "systemctl reboot",
                 poweroff: "systemctl poweroff"
+            })
+            // Cross-compositor window sync. See docs/WINDOW-SYNC.md.
+            property var windowSync: ({
+                enabled: true,
+                persist: true,     // save registry to disk across restarts
+                restore: true,     // apply adopted state on window appear
+                kwinBridge: false, // scripts may ensure the KWin bridge
+                adoptTtlMs: 60000, // one adopt per identity per minute
+                suppressMs: 4000,  // echo suppression after self-applied state
+                staleMs: 600000    // expire entries unseen for 10 min
             })
         }
     }

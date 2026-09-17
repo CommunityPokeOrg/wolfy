@@ -57,6 +57,11 @@ for s in scripts/*.js; do
     base="$(basename "$s")"
     [ -f "$WOLFY_CONFIG/scripts/$base" ] || cp "$s" "$WOLFY_CONFIG/scripts/$base"
 done
+# KWin bridge + loader for cross-compositor window sync.
+mkdir -p "$WOLFY_CONFIG/kwin" "$WOLFY_CONFIG/tools"
+cp kwin/wolfy-kwin-bridge.js "$WOLFY_CONFIG/kwin/" 2>/dev/null || true
+cp tools/kwin-bridge.sh "$WOLFY_CONFIG/tools/" 2>/dev/null || true
+chmod +x "$WOLFY_CONFIG/tools/kwin-bridge.sh" 2>/dev/null || true
 echo "install: config -> $WOLFY_CONFIG"
 
 # --- validate -------------------------------------------------------------

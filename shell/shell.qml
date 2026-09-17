@@ -8,8 +8,10 @@ import "components"
 ShellRoot {
     id: root
 
-    // Touch the singleton so the script runtime starts with the shell.
+    // Touch the singletons so the script runtime and window registry
+    // start with the shell.
     property var scriptsReady: ScriptHost.engine
+    property var syncReady: WinSync.bridgeConnected
 
     Variants {
         model: Quickshell.screens

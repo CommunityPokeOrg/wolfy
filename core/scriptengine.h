@@ -4,6 +4,7 @@
 #include <QHash>
 #include <QJSValue>
 #include <QObject>
+#include <QPointer>
 #include <QVariant>
 #include <QStringList>
 #include <QtQml/qqmlregistration.h>
@@ -51,6 +52,11 @@ public:
     QVariant configObject() const { return m_config; }
     Q_INVOKABLE void setConfigObject(const QVariant &config);
 
+    // Shared window registry backing the wolfy.sync.* script API.
+    // Stored as QObject so a stale QML object can't crash scripts.
+    QObject *windowSync() const { return m_sync.data(); }
+    Q_INVOKABLE void setWindowSync(QObject *sync) { m_sync = sync; }
+
 public slots:
     void loadScripts();
     void unloadAll();
@@ -84,6 +90,7 @@ private:
     QHash<QString, ScriptContext *> m_byPath;
     QFileSystemWatcher *m_watcher;
     QVariant m_config;
+    QPointer<QObject> m_sync;
 };
 
 #endif // WOLFY_SCRIPTENGINE_H

@@ -62,12 +62,31 @@ QuickShell IPC handlers: `launcher` (toggle/open/close) and `session`
 (toggle). Scripts reach the same actions via `launcher.open` /
 `session.open` events.
 
+## Window sync
+
+`WindowSync` (in `wolfycore`) is a window-state registry exposed on the
+session bus as `org.wolfy.WindowSync /sync` — see
+[WINDOW-SYNC.md](WINDOW-SYNC.md). Sources (the KWin scripting bridge,
+the local wlr toplevel feed in `services/WinSync.qml`, scripts
+themselves) upsert `<source>|<id>` entries carrying appId, geometry,
+workspace, output and state flags. Windows that appear on a view
+*adopt* the freshest matching identity instead of being re-initialized;
+adoption claims are TTL-guarded and self-applied state is echo-
+suppressed, which keeps the loop from re-running setup. The registry
+persists (0600 JSON) so it survives shell restarts, and `hello`/`bye`
+handshakes track source connectivity for reconnect recovery.
+
 ## Testing
 
 - `tests/test_scriptengine.cpp` (CTest/QtTest): loading, dispatch, logging,
   exec gating, timers, hot reload, config injection.
+- `tests/test_winsync.cpp` (CTest/QtTest): registry merge, adoption TTL,
+  tombstone grace, suppression, persistence round-trip, handshake,
+  stale sweep.
 - `tests/node/` — a pure-Node `vm`-based reimplementation of the `wolfy`
   API that runs the real example scripts; catches API drift without Qt.
+  `kwin-mock.js` loads the real KWin bridge under mocked KWin5/KWin6
+  globals and asserts the D-Bus traffic.
 - `tests/lint.sh` — qmllint over all shell QML. QuickShell ships no
   qmltypes on most distros, so `tests/qml-stubs/` declares the Quickshell
   modules (and a minimal `Wolfy.Core`) in the `QtQuick.tooling` format.

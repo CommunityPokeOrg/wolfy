@@ -42,7 +42,25 @@ class WolfyShim {
             },
             env: (name) => process.env[name] || "",
             quit: () => { throw new Error("wolfy.quit()"); },
+            sync: {
+                windows: () => shim.registry.slice(),
+                find: (identity) =>
+                    shim.registry.find(e => e.identity === identity.toLowerCase()) || {},
+                adopt: (identity) => {
+                    const i = identity.toLowerCase();
+                    if (shim.adopted.has(i)) return {};
+                    const e = shim.registry.find(x => x.identity === i);
+                    if (!e) return {};
+                    shim.adopted.add(i);
+                    return e;
+                },
+                upsert: (entry) => { shim.registry.push(entry); return entry; },
+                remove: () => {},
+                suppress: () => {},
+            },
         };
+        this.registry = [];   // fake window registry entries
+        this.adopted = new Set();
     }
 
     load(path) {

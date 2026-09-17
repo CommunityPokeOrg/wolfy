@@ -92,6 +92,14 @@ QJSValue ScriptContext::buildApiObject()
     api.exec        = function(cmd, cb) { ctx._exec(cmd, cb); };
     api.env         = function(name)    { return ctx._env(name); };
     api.quit        = function()        { ctx._quit(); };
+    api.sync        = {
+        windows:  function()            { return ctx._syncWindows(); },
+        find:     function(identity)    { return ctx._syncFind(identity); },
+        adopt:    function(identity)    { return ctx._syncAdopt(identity); },
+        upsert:   function(entry)       { return ctx._syncUpsert(entry); },
+        remove:   function(key)         { ctx._syncRemove(key); },
+        suppress: function(identity,ms) { ctx._syncSuppress(identity, ms); },
+    };
     return api;
 })()
     )JS"));
@@ -205,6 +213,63 @@ QString ScriptContext::_env(const QString &name) const
 void ScriptContext::_quit()
 {
     m_js->throwError(QStringLiteral("wolfy.quit() called by %1").arg(m_name));
+}
+
+// wolfy.sync.* passthroughs. They resolve the WindowSync QObject lazily
+// and call its slots via metaObject so the context never holds a stale
+// pointer after a shell reload.
+QVariantList ScriptContext::_syncWindows() const
+{
+    if (QObject *s = m_engine->windowSync())
+        return s->property("windows").toList();
+    return {};
+}
+
+QVariantMap ScriptContext::_syncFind(const QString &identity) const
+{
+    QVariantMap out;
+    if (QObject *s = m_engine->windowSync())
+        QMetaObject::invokeMethod(s, "find", Qt::DirectConnection,
+                                  Q_RETURN_ARG(QVariantMap, out),
+                                  Q_ARG(QString, identity));
+    return out;
+}
+
+QVariantMap ScriptContext::_syncAdopt(const QString &identity) const
+{
+    QVariantMap out;
+    if (QObject *s = m_engine->windowSync())
+        QMetaObject::invokeMethod(s, "adopt", Qt::DirectConnection,
+                                  Q_RETURN_ARG(QVariantMap, out),
+                                  Q_ARG(QString, identity),
+                                  Q_ARG(QString, QString()));
+    return out;
+}
+
+QVariantMap ScriptContext::_syncUpsert(const QVariantMap &entry)
+{
+    QVariantMap out;
+    if (QObject *s = m_engine->windowSync())
+        QMetaObject::invokeMethod(s, "upsert", Qt::DirectConnection,
+                                  Q_RETURN_ARG(QVariantMap, out),
+                                  Q_ARG(QVariantMap, entry));
+    return out;
+}
+
+void ScriptContext::_syncRemove(const QString &key)
+{
+    QVariantMap out;
+    if (QObject *s = m_engine->windowSync())
+        QMetaObject::invokeMethod(s, "remove", Qt::DirectConnection,
+                                  Q_RETURN_ARG(QVariantMap, out),
+                                  Q_ARG(QString, key));
+}
+
+void ScriptContext::_syncSuppress(const QString &identity, int ms)
+{
+    if (QObject *s = m_engine->windowSync())
+        QMetaObject::invokeMethod(s, "suppress", Qt::DirectConnection,
+                                  Q_ARG(QString, identity), Q_ARG(int, ms));
 }
 
 void ScriptContext::reportError(const QString &message, int line)

@@ -1,6 +1,7 @@
 #include <QtTest>
 #include <QTemporaryDir>
 #include <QSignalSpy>
+#include <QJSEngine>
 
 #include "scriptengine.h"
 

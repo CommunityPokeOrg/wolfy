@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <QVariantMap>
 
 class QJSEngine;
 class QTimer;
@@ -49,6 +50,12 @@ public:
     Q_INVOKABLE void _exec(const QString &command, const QJSValue &callback);
     Q_INVOKABLE QString _env(const QString &name) const;
     Q_INVOKABLE void _quit();
+    Q_INVOKABLE QVariantList _syncWindows() const;
+    Q_INVOKABLE QVariantMap _syncFind(const QString &identity) const;
+    Q_INVOKABLE QVariantMap _syncAdopt(const QString &identity) const;
+    Q_INVOKABLE QVariantMap _syncUpsert(const QVariantMap &entry);
+    Q_INVOKABLE void _syncRemove(const QString &key);
+    Q_INVOKABLE void _syncSuppress(const QString &identity, int ms);
 
 signals:
     // Forwarded to ScriptEngine::eventFromScript.

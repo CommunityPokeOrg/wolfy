@@ -18,7 +18,7 @@ system-tray host support in the compositor.
 
 ```sh
 sudo apt install build-essential cmake qt6-base-dev qt6-declarative-dev \
-                 qml6-module-qtquick nodejs
+                 qml6-module-qtquick qt6-base-dev-tools nodejs qdbus
 ```
 
 QuickShell itself is built from source (see below) or installed from your

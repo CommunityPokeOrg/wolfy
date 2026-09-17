@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Qml Quick Test)
+find_package(Qt6 REQUIRED COMPONENTS Core Qml Quick Test DBus)
 
 if(COMMAND qt_standard_project_setup)
     qt_standard_project_setup()

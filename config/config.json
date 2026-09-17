@@ -13,5 +13,14 @@
         "logout": "swaymsg exit",
         "reboot": "systemctl reboot",
         "poweroff": "systemctl poweroff"
+    },
+    "windowSync": {
+        "enabled": true,
+        "persist": true,
+        "restore": true,
+        "kwinBridge": false,
+        "adoptTtlMs": 60000,
+        "suppressMs": 4000,
+        "staleMs": 600000
     }
 }

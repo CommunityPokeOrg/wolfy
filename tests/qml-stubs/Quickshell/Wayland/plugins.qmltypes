@@ -29,6 +29,12 @@ Module {
         Enum { name: "Focus"; values: ["None", "Exclusive", "OnDemand"] }
     }
     Component {
+        name: "QuickshellScreenInfo"
+        prototype: "QObject"
+        isCreatable: false
+        Property { name: "name"; type: "string" }
+    }
+    Component {
         name: "Toplevel"
         prototype: "QObject"
         exports: ["Quickshell.Wayland/Toplevel 1.0"]
@@ -37,8 +43,19 @@ Module {
         Property { name: "appId"; type: "string" }
         Property { name: "title"; type: "string" }
         Property { name: "activated"; type: "bool" }
+        Property { name: "screens"; type: "QuickshellScreenInfo"; isList: true; isReadonly: true }
+        Property { name: "maximized"; type: "bool" }
+        Property { name: "minimized"; type: "bool" }
+        Property { name: "fullscreen"; type: "bool" }
         Method { name: "activate" }
         Method { name: "close" }
+    }
+    Component {
+        name: "UntypedObjectModel"
+        prototype: "QObject"
+        isCreatable: false
+        Property { name: "values"; type: "Toplevel"; isList: true; isReadonly: true }
+        Signal { name: "valuesChanged" }
     }
     Component {
         name: "ToplevelManager"
@@ -46,7 +63,7 @@ Module {
         exports: ["Quickshell.Wayland/ToplevelManager 1.0"]
         exportMetaObjectRevisions: [256]
         isSingleton: true
-        Property { name: "toplevels"; type: "Toplevel"; isList: true; isReadonly: true }
+        Property { name: "toplevels"; type: "UntypedObjectModel"; isReadonly: true }
         Property { name: "activeToplevel"; type: "Toplevel" }
     }
 }

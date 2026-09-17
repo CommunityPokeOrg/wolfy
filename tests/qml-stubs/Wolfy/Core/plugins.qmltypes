@@ -41,5 +41,46 @@ Module {
         Signal { name: "autoReloadChanged" }
         Signal { name: "allowExecChanged" }
         Signal { name: "scriptsChanged" }
+        Method { name: "setWindowSync"; Parameter { name: "sync"; type: "QObject" } }
+    }
+
+    Component {
+        name: "WindowSync"
+        prototype: "QObject"
+        exports: ["Wolfy.Core/WindowSync 1.0"]
+        exportMetaObjectRevisions: [256]
+
+        Property { name: "enabled"; type: "bool" }
+        Property { name: "persistPath"; type: "string" }
+        Property { name: "windows"; type: "QVariantList" }
+        Property { name: "windowCount"; type: "int" }
+        Property { name: "bridgeConnected"; type: "bool" }
+        Property { name: "adoptTtlMs"; type: "int" }
+        Property { name: "suppressMs"; type: "int" }
+        Property { name: "staleMs"; type: "int" }
+        Method { name: "upsert"; Parameter { name: "entry"; type: "QVariantMap" }
+            Method { name: "returns"; type: "QVariantMap" } }
+        Method { name: "remove"; Parameter { name: "key"; type: "string" } }
+        Method { name: "adopt"
+            Parameter { name: "identity"; type: "string" }
+            Parameter { name: "excludeKey"; type: "string" } }
+        Method { name: "find"; Parameter { name: "identity"; type: "string" } }
+        Method { name: "suppress"
+            Parameter { name: "identity"; type: "string" }
+            Parameter { name: "ms"; type: "int" } }
+        Method { name: "isSuppressed"; Parameter { name: "identity"; type: "string" } }
+        Method { name: "hello"; Parameter { name: "source"; type: "string" } }
+        Method { name: "bye"; Parameter { name: "source"; type: "string" } }
+        Method { name: "snapshot" }
+        Method { name: "registerService" }
+        Signal { name: "windowAdded"; Parameter { name: "entry"; type: "QVariantMap" } }
+        Signal { name: "windowUpdated"; Parameter { name: "entry"; type: "QVariantMap" } }
+        Signal { name: "windowRemoved"; Parameter { name: "entry"; type: "QVariantMap" } }
+        Signal { name: "windowAdopted"; Parameter { name: "entry"; type: "QVariantMap" } }
+        Signal { name: "bridgeConnectedChanged" }
+        Signal { name: "windowsChanged" }
+        Signal { name: "logMessage"
+            Parameter { name: "level"; type: "string" }
+            Parameter { name: "message"; type: "string" } }
     }
 }

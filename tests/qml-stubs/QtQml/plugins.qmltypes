@@ -15,6 +15,15 @@ Module {
         Signal { name: "destruction" }
     }
     Component {
+        name: "Connections"
+        prototype: "QObject"
+        exports: ["QtQml/Connections 6.0", "QtQuick/Connections 2.0"]
+        exportMetaObjectRevisions: [1536]
+        Property { name: "target"; type: "QObject" }
+        Property { name: "enabled"; type: "bool" }
+        Property { name: "ignoreUnknownSignals"; type: "bool" }
+    }
+    Component {
         name: "Timer"
         prototype: "QObject"
         exports: ["QtQml/Timer 6.0"]

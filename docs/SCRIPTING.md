@@ -60,6 +60,29 @@ Snapshot of the config the shell loaded (same keys as `config.json`).
 
 Terminates this script's context.
 
+## `wolfy.sync` — window sync registry
+
+Shared window-state registry (see `docs/WINDOW-SYNC.md` for semantics).
+
+- `wolfy.sync.windows()` → all entries
+- `wolfy.sync.find(identity)` → freshest live entry for an app id
+- `wolfy.sync.adopt(identity)` → claim state; `{}` if already claimed
+- `wolfy.sync.upsert(entry)` / `wolfy.sync.remove(key)` — be a source
+- `wolfy.sync.suppress(identity, ms)` — silence registry signals
+
+Entry shape: `{ key, source, id, appId, identity, title, rect, workspace,
+output, minimized, maximized, fullscreen, focused, lastSeen, gone,
+adopted }`.
+
+### Window events
+
+- `window.opened` — a genuinely new window (no claimable history)
+- `window.adopted` — window appeared with known state; payload
+  `{window, previous}`
+- `window.added` / `window.updated` / `window.closed` — raw registry
+  changes (any source)
+- `sync.connected` — a bridge source said `hello`
+
 ## Bundled examples
 
 - `hello.js` — startup notification
@@ -67,3 +90,4 @@ Terminates this script's context.
 - `volume-osd.js` — custom OSD text on `volume.changed`
 - `workspace-log.js` — logs workspace switches
 - `auto-theme.js` — `setInterval` theme cycling
+- `window-sync.js` — window sync logging + adoption notifications

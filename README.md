@@ -16,19 +16,25 @@ Hyprland) and provides:
 - **Session menu** (lock / logout / reboot / poweroff, configurable commands)
 - **Theme engine** (moonlight / daybreak / forest palettes, live-switchable)
 - **JSON config** at `~/.config/wolfy/config.json`, hot-reloaded
-- **`wolfy` JavaScript API** — event bus, timers, subprocesses, config —
-  for extending the shell without touching QML
+- **Cross-KWin window sync** — a persistent window registry fed over
+  D-Bus (KWin scripting bridge included) plus the local toplevel list,
+  so view/display switches adopt windows instead of re-running setup.
+  See [docs/WINDOW-SYNC.md](docs/WINDOW-SYNC.md)
+- **`wolfy` JavaScript API** — event bus, timers, subprocesses, config,
+  window-sync access — for extending the shell without touching QML
 
 ## Repository layout
 
 | Path | What |
 |---|---|
 | `shell/` | QML shell: `shell.qml` entry point, `components/` widgets, `services/` singletons |
-| `core/` | `wolfycore` C++ QML plugin (`Wolfy.Core` module): the `ScriptEngine` that runs JS |
+| `core/` | `wolfycore` C++ QML plugin (`Wolfy.Core` module): the `ScriptEngine` that runs JS and the `WindowSync` registry |
 | `scripts/` | Example user scripts (also the default script directory) |
+| `kwin/` | `wolfy-kwin-bridge.js` — KWin scripting bridge for window sync |
+| `tools/` | `kwin-bridge.sh` — load/manage the KWin bridge over D-Bus |
 | `config/` | Default `config.json` |
-| `tests/` | CTest unit tests for the script engine, a Node.js shim test suite, and `lint.sh` (qmllint + bundled qmltypes stubs) |
-| `docs/` | Setup, architecture, scripting API, live-session docs |
+| `tests/` | CTest unit tests (script engine + window sync), a Node.js shim suite incl. a mocked-KWin bridge harness, and `lint.sh` |
+| `docs/` | Setup, architecture, scripting API, window sync, live-session docs |
 
 ## Quick start
 

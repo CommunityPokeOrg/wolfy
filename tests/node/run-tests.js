@@ -7,6 +7,7 @@ const assert = require("node:assert/strict");
 const path = require("node:path");
 const fs = require("node:fs");
 const { WolfyShim } = require("./wolfy-shim.js");
+const { KWinMock, makeWindow } = require("./kwin-mock.js");
 
 const SCRIPTS = path.join(__dirname, "..", "..", "scripts");
 const files = fs.readdirSync(SCRIPTS).filter(f => f.endsWith(".js"));
@@ -75,3 +76,65 @@ test("workspace-log.js logs workspace events and calls exec", () => {
     shim.fire("workspace.changed", { name: "3" });
     assert.ok(shim.logs.some(l => /workspace changed -> 3/.test(l.msg)));
 });
+
+test("window-sync.js logs opens and notifies on adoption", () => {
+    const shim = new WolfyShim();
+    shim.load(path.join(SCRIPTS, "window-sync.js"));
+    shim.fire("shell.start");
+    shim.fire("window.opened", { appId: "foot", title: "term" });
+    assert.ok(shim.logs.some(l => /window opened: foot/.test(l.msg)));
+    shim.fire("window.adopted",
+              { window: { appId: "foot" }, previous: { source: "kwin", workspace: "3" } });
+    const note = shim.emitted.find(e => e.name === "shell.notify");
+    assert.ok(note, "expected adoption notification");
+    assert.match(note.payload.body, /kwin/);
+});
+
+// --- KWin bridge (kwin/wolfy-kwin-bridge.js) under a mocked KWin ------
+
+for (const kind of ["kwin5", "kwin6"]) {
+    test(`bridge (${kind}): hello + serialize + upsert on window add`, () => {
+        const mock = new KWinMock(kind);
+        assert.ok(mock.hellos().length >= 1, "expected hello handshake");
+
+        const w = makeWindow(kind);
+        mock.addWindow(w);
+        const up = mock.upserts().at(-1);
+        assert.ok(up, "expected upsert after window add");
+        assert.equal(up.arg.source, "kwin");
+        assert.equal(up.arg.appId, "Firefox");
+        assert.equal(up.arg.workspace, "2");
+        assert.equal(up.service, "org.wolfy.WindowSync");
+        assert.equal(up.path, "/sync");
+    });
+
+    test(`bridge (${kind}): remove on close`, () => {
+        const mock = new KWinMock(kind);
+        const w = makeWindow(kind);
+        mock.addWindow(w);
+        mock.removeWindow(w);
+        const rem = mock.removals().at(-1);
+        assert.ok(rem, "expected remove call");
+        assert.match(rem.arg, /^kwin\|/);
+    });
+
+    test(`bridge (${kind}): property signals re-push state`, () => {
+        const mock = new KWinMock(kind);
+        const w = makeWindow(kind);
+        mock.addWindow(w);
+        const before = mock.upserts().length;
+        w.minimized = true;
+        w.minimizedChanged.fire();
+        assert.ok(mock.upserts().length > before);
+        assert.equal(mock.upserts().at(-1).arg.minimized, true);
+    });
+
+    test(`bridge (${kind}): non-normal windows are skipped`, () => {
+        const mock = new KWinMock(kind);
+        const panel = makeWindow(kind, kind === "kwin6"
+            ? { dock: true } : { dock: true, skipSwitcher: true });
+        const before = mock.upserts().length;
+        mock.addWindow(panel);
+        assert.equal(mock.upserts().length, before);
+    });
+}
